@@ -15,27 +15,33 @@ local screenHeight <const> = playdate.display.getHeight()
 local cover = {
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
     {
         image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new()
+        sprite = playdate.graphics.sprite.new(),
+        lazy_x = 0,
     },
 }
 local cover_flow_offset_x = 0
@@ -44,32 +50,44 @@ local cover_padding = screenWidth/10
 -----------------
 
 function mapValue(old_value, old_min, old_max, new_min, new_max)
-    return math.floor((old_value - old_min) * (new_max - new_min) / (old_max - old_min) + new_min)
+    return ((old_value - old_min) * (new_max - new_min) / (old_max - old_min) + new_min)
 end
 
-function map_inoutcubic(input, in_min, in_max, out_min, out_max)
-    function cubicBezierTransform(value, p0, p1, p2, p3)
-        -- 根据贝塞尔曲线的公式计算变换后的值
-        local t = value
-        local x = (1 - t)^3 * p0.x + 3 * (1 - t)^2 * t * p1.x + 3 * (1 - t) * t^2 * p2.x + t^3 * p3.x
-        local y = (1 - t)^3 * p0.y + 3 * (1 - t)^2 * t * p1.y + 3 * (1 - t) * t^2 * p2.y + t^3 * p3.y
-    
-        -- return {x = x, y = y}
-        return y
+function map_inoutcubic(input, old_min, old_max, new_min, new_max)
+    -- Cube function
+    function cube(n)
+        return n * n * n
     end
 
-    local p0 = {x = 0, y = 0}
-    local p1 = {x = 0, y = 0.6}
-    local p2 = {x = 1, y = 1}
-    local p3 = {x = 1, y = 0.4}
+    -- Triple function
+    function triple(n)
+        return 3 * n * n
+    end
 
-    local srcRange = {in_min, in_max}
-    local dstRange = {out_min, out_max}
-    local ratio = (input - srcRange[1]) / (srcRange[2] - srcRange[1])
-    -- local t = cubicBezierTransform(ratio, 0.6, 0.4)
-    local t = cubicBezierTransform(ratio, p0, p1, p2, p3)
-    local mappedValue = (dstRange[2] - dstRange[1]) * t + dstRange[1]
-    return mappedValue
+    -- Cubic bezier function
+    function calc_bezier(p0, p1, p2, p3, t)
+        local it = 1.0 - t
+        return cube(it) * p0 + 3 * triple(it) * t * p1 + 3 * t * t * it * p2 + cube(t) * p3
+    end
+
+    -- Main cubic bezier function
+    function cubic_bezier(x)
+        -- Define your cubic-bezier parameters here
+        local p0 = 0
+        local p1 = .14
+        local p2 = .7
+        local p3 = 1
+
+        -- Clamp x value between 0 and 1
+        x = math.min(math.max(x, 0), 1)
+
+        return calc_bezier(p0, p1, p2, p3, x)
+    end
+
+    local temp_map = mapValue(input, old_min, old_max, 0, 1)
+    local res = mapValue(cubic_bezier(temp_map), 0, 1, new_min, new_max)
+    -- print("input", input, "temp_map", temp_map, "res", res)
+    return res
 end
 
 -----------------
@@ -145,11 +163,11 @@ function cover_flow_x_map_func(x)
 end
 
 function cover_update_angle_render(x, sprite, image)
-    if x < 100 or x >300 then
+    if x < 140 or x > 260 then
         return
     end
-    local target_angle = mapValue(x, 100, 300, 70, -70)
-    -- local target_angle = map_inoutcubic(x, 100, 300, 70, -70)
+    local target_angle = mapValue(x, 140, 260, 65, -65)
+    -- local target_angle = map_inoutcubic(x, 140, 260, 70, -60)
     local cover_width, cover_height = image:getSize()
     local target_image = gfx.image.new(cover_width, cover_height, gfx.kColorClear)
     local direction
@@ -181,9 +199,12 @@ function cover_update()
     local add_x = 0
     for k,v in pairs(cover) do
         local target_x = cover_flow_x_map_func(add_x+cover_flow_offset_x)
-        cover_update_angle_render(target_x, v.sprite, v.image)
-        v.sprite:moveTo(target_x, screenHeight/2)
-        -- print("in", cover_flow_offset_x, "out", cover_flow_x_map_func(add_x+cover_flow_offset_x))
+        if v.lazy_x ~= target_x then
+            cover_update_angle_render(target_x, v.sprite, v.image)
+            v.sprite:moveTo(target_x, screenHeight/2)
+            -- print("in", cover_flow_offset_x, "out", cover_flow_x_map_func(add_x+cover_flow_offset_x))
+            cover[k].lazy_x = target_x
+        end
         add_x += cover_padding
     end
 end
