@@ -30,55 +30,102 @@ local cover = {
         name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷迹asdasd波 - MyGO!!!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷123迹波 - MyGO!!!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷迹555波 - MyGO!!!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷agsadgasg!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷aaaaaO!!!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "迷ggggGO!!!!!",
+        name = "MyGO!!!!!\n迷迹波",
         lazy_x = 0,
         out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
+    },
+    {
+        image = gfx.image.new('img/cover'),
+        sprite = playdate.graphics.sprite.new(),
+        name = "MyGO!!!!!\n迷迹波",
+        lazy_x = 0,
+        out_of_bound = false,
+        song = {
+            "测试1",
+            "测试2",
+            "test3"
+        }
     },
 }
 local STAGE = {}
 local stage_manager = "cover_flow_scroll"
-local cover_flow_offset_y = -12
+local cover_flow_offset_y = -10
 local cover_flow_offset_x = 0
-local cover_padding = screenWidth/12
+local cover_padding = screenWidth/11
 local cover_select_index = 1
 local cover_select_index_lazy = 1
 
@@ -88,6 +135,8 @@ local cover_center_animator = gfx.animator.new(1000, -(#cover * cover_padding), 
 local cover_name_sprite = gfx.sprite.new()
 local statebar_sprite = gfx.sprite.new(gfx.image.new("img/statebar"))
 local battery_lazy = 0
+local arrow_btn_skip_cnt_sensitivity = 100
+local song_select_index = 1
 
 -----------------
 
@@ -130,6 +179,50 @@ function map_inoutcubic(input, old_min, old_max, new_min, new_max)
     local res = mapValue(cubic_bezier(temp_map), 0, 1, new_min, new_max)
     -- print("input", input, "temp_map", temp_map, "res", res)
     return res
+end
+
+
+function x_map_func_three_stage(x, point_start, point1, point2, point_end)
+    --x_map_func_three_stage(10, {x=0,y=0}, {x=100,y=50}, {x=300,y=350}, {x=400,y=400})
+    -- print("p0", point_start.x..","..point_start.y, "p1", point1.x..","..point1.y, "p2", point2.x..","..point2.y, "p4",point_end.x..","..point_end.y)
+
+    function _f_1(x)
+        return ((point1.y-point_start.y)/(point1.x-point_start.x))*(x-point_start.x) + point_start.y
+    end
+
+    function _f_2(x)
+        return ((point2.y-point1.y)/(point2.x-point1.x))*(x-point1.x) + point1.y
+    end
+ 
+    function _f_3(x)
+        return ((point_end.y-point2.y)/(point_end.x-point2.x))*(x-point2.x) + point2.y
+    end
+
+    if x <= point1.x then
+        return _f_1(x)
+    elseif x > point1.x and x <= point2.x then
+        return _f_2(x)
+    elseif x > point2.x then
+        return _f_3(x)
+    end
+end
+
+function cover_flow_x_map_func(x)
+    return x_map_func_three_stage(x, {x=0,y=0}, {x=100,y=50}, {x=300,y=350}, {x=400,y=400})
+end
+
+function cover_flip_angle_map_func(x, x_start, x_end, angle_start, angle_end)
+    return x_map_func_three_stage(x,
+                                {x=x_start,y=angle_start},
+                                {
+                                    x=x_start+(x_end-x_start)*(2/6),
+                                    y=angle_start+(angle_end-angle_start)*(1.6/4)
+                                },
+                                {
+                                    x=x_start+(x_end-x_start)*(4/6),
+                                    y=angle_start+(angle_end-angle_start)*(2.4/4)
+                                },
+                                {x=x_end,y=angle_end})
 end
 
 -----------------
@@ -180,52 +273,6 @@ function cover_render(anchor, tilt_angle, cover_image, draw_x, draw_y)
 end
 
 
-function x_map_func_three_stage(x, point_start, point1, point2, point_end)
-    --x_map_func_three_stage(10, {x=0,y=0}, {x=100,y=50}, {x=300,y=350}, {x=400,y=400})
-    -- print("p0", point_start.x..","..point_start.y, "p1", point1.x..","..point1.y, "p2", point2.x..","..point2.y, "p4",point_end.x..","..point_end.y)
-
-    function _f_1(x)
-        return ((point1.y-point_start.y)/(point1.x-point_start.x))*(x-point_start.x) + point_start.y
-    end
-
-    function _f_2(x)
-        return ((point2.y-point1.y)/(point2.x-point1.x))*(x-point1.x) + point1.y
-    end
- 
-    function _f_3(x)
-        return ((point_end.y-point2.y)/(point_end.x-point2.x))*(x-point2.x) + point2.y
-    end
-
-    if x <= point1.x then
-        return _f_1(x)
-    elseif x > point1.x and x <= point2.x then
-        return _f_2(x)
-    elseif x > point2.x then
-        return _f_3(x)
-    end
-end
-
-
-function cover_flow_x_map_func(x)
-    return x_map_func_three_stage(x, {x=0,y=0}, {x=100,y=50}, {x=300,y=350}, {x=400,y=400})
-end
-
-
-function cover_flip_angle_map_func(x, x_start, x_end, angle_start, angle_end)
-    return x_map_func_three_stage(x,
-                                {x=x_start,y=angle_start},
-                                {
-                                    x=x_start+(x_end-x_start)*(2/6),
-                                    y=angle_start+(angle_end-angle_start)*(1.6/4)
-                                },
-                                {
-                                    x=x_start+(x_end-x_start)*(4/6),
-                                    y=angle_start+(angle_end-angle_start)*(2.4/4)
-                                },
-                                {x=x_end,y=angle_end})
-end
-
-
 function cover_update_angle_render(x, sprite, image)
     if x < cover_flip_range.range_in or x > cover_flip_range.range_out then
         return
@@ -258,14 +305,13 @@ function cover_init()
     end
 end
 
-
 function cover_update()
     local add_x = 0
     local remove_margin = 50
-    -- FIXME 当专辑sprite超出屏幕时移除
     for k,v in pairs(cover) do
         local target_x = cover_flow_x_map_func(add_x+cover_flow_offset_x)
         if v.lazy_x ~= target_x then
+            -- out of screen bound: remove sprite
             if target_x > screenWidth + remove_margin or target_x < -remove_margin then
                 v.sprite:remove()
                 goto skip_to_next
@@ -310,7 +356,7 @@ function cover_back_to_center()
     if cover_back_to_center_init then
         local target_x = -((get_cover_index()-1) * cover_padding) + screenWidth/2
         if cover_flow_offset_x ~= target_x then
-            cover_center_animator = gfx.animator.new(150, cover_flow_offset_x, target_x, playdate.easingFunctions.inOutCubic)
+            cover_center_animator = gfx.animator.new(150, cover_flow_offset_x, target_x, playdate.easingFunctions.outCubic)
         end
         -- print("get_cover_index", get_cover_index(), "cover_flow_offset_x", cover_flow_offset_x, "target_x", target_x )
         cover_back_to_center_init = false
@@ -338,14 +384,17 @@ function get_cover_index()
     return res
 end
 
+
 function update_cover_name(cover_name)
     local image = gfx.image.new(screenWidth, 40)
 	gfx.pushContext(image)
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
         gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
         gfx.drawTextAligned(cover_name, screenWidth/2, 0, kTextAlignment.center)
 	gfx.popContext()
     cover_name_sprite:setImage(image)
 end
+
 
 function update_battery()
     if pd.getBatteryPercentage() ~= battery_lazy then
@@ -358,6 +407,7 @@ function update_battery()
         battery_lazy = pd.getBatteryPercentage()
     end
 end
+
 
 function crank_move_update_routine()
     -- update when crank moved
@@ -373,6 +423,101 @@ function crank_move_update_routine()
     end
     update_battery()
 end
+
+
+local draw_song_list_init = false
+local draw_song_list_size, draw_song_list_gridview, draw_song_list_gridviewSprite
+function draw_song_list()
+    if not draw_song_list_init then
+
+        gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
+        draw_song_list_size = gfx.getTextSize("我")
+        draw_song_list_gridview = pd.ui.gridview.new(0, draw_song_list_size*1.5+2)
+        draw_song_list_gridview:setNumberOfRows(#cover[cover_select_index].song)
+        draw_song_list_gridview:setCellPadding(0,0,4,0)
+        draw_song_list_gridview:setSectionHeaderHeight(draw_song_list_size*1.5*2+4)
+
+        draw_song_list_gridviewSprite = gfx.sprite.new()
+        draw_song_list_gridviewSprite:setCenter(0.5,1)
+        draw_song_list_gridviewSprite:moveTo(screenWidth/2, screenHeight)
+        draw_song_list_gridviewSprite:setZIndex(300)
+        draw_song_list_gridviewSprite:add()
+
+        draw_song_list_init = true
+    end
+
+    function draw_song_list_gridview:drawSectionHeader(section, x, y, width, height)
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
+        gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
+        gfx.drawTextAligned(cover[cover_select_index].name, 0, 0, kTextAlignment.left)
+    end
+
+    function draw_song_list_gridview:drawCell(section, row, column, selected, x, y, width, height)
+        gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
+        if selected then
+            --FIXME indicator
+            gfx.setColor(gfx.kColorBlack)
+            gfx.fillRect(x, y, width, height)
+            gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+            gfx.drawTextAligned(cover[cover_select_index].song[row], x+10, y+5, kTextAlignment.left)
+            -- gfx.setImageDrawMode(gfx.kDrawModeCopy)
+            -- indicator_img.list_A:draw(screenWidth-50, y)
+        else
+            gfx.setImageDrawMode(gfx.kDrawModeCopy)
+            gfx.drawTextAligned(cover[cover_select_index].song[row], x+10, y+5, kTextAlignment.left)
+        end
+    end
+
+    function _scroll_select_file_gridview(direction)
+        if direction == "next" then
+            draw_song_list_gridview:selectNextRow(true)
+        elseif direction == "previous" then
+            draw_song_list_gridview:selectPreviousRow(true)
+        end
+        -- SFX.selection.sound:play()
+    end
+
+    local crankTicks = pd.getCrankTicks(10)
+    if crankTicks == 1 then
+        _scroll_select_file_gridview("next")
+    elseif crankTicks == -1 then
+        _scroll_select_file_gridview("previous")
+    end
+
+    if pd.buttonIsPressed(pd.kButtonDown) then
+        arrow_btn_skip_cnt_sensitivity += 1
+        if arrow_btn_skip_cnt_sensitivity > 4 then
+            arrow_btn_skip_cnt_sensitivity = 0
+            _scroll_select_file_gridview("next")
+        end
+    elseif pd.buttonIsPressed(pd.kButtonUp) then
+        arrow_btn_skip_cnt_sensitivity += 1
+        if arrow_btn_skip_cnt_sensitivity > 4 then
+            arrow_btn_skip_cnt_sensitivity = 0
+            _scroll_select_file_gridview("previous")
+        end
+    end
+    if pd.buttonJustReleased(pd.kButtonDown) or pd.buttonJustReleased(pd.kButtonUp) then
+        arrow_btn_skip_cnt_sensitivity = 100
+    end
+
+    _, song_select_index, _ = draw_song_list_gridview:getSelection()
+    
+    ----------------------draw
+    if draw_song_list_gridview.needsDisplay then
+        local pos = {
+            x=screenWidth*(3/5),
+            y=screenHeight*(3/4),
+        }
+        local gridviewImage = gfx.image.new(pos.x,pos.y)
+        gfx.pushContext(gridviewImage)
+            draw_song_list_gridview:drawInRect(0, 0, pos.x, pos.y)
+        gfx.popContext()
+        draw_song_list_gridviewSprite:setImage(gridviewImage)
+    end
+
+end
+
 
 
 local flip_cover_to_none_init = false
@@ -405,7 +550,7 @@ STAGE["cover_flow_scroll"] = function()
         crank_move_update_routine()
         cover_back_to_center_init = true
     else
-        playdate.timer.new(10, function(value)
+        playdate.timer.new(5, function(value)
             cover_back_to_center()
         end
         )
@@ -452,7 +597,7 @@ function pd.update()
     
     STAGE[stage_manager]()
 
-
+    -- draw_song_list()
 
 end
 
