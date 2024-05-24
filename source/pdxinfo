@@ -1,0 +1,7 @@
+name=cover flow
+author=Haru
+description=iPod Cover Flow demo
+bundleID=com.haru.coverflow
+version=1.0
+buildNumber=1
+imagePath=img/launcher

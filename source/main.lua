@@ -27,13 +27,23 @@ local cover = {
     {
         image = gfx.image.new('img/cover'),
         sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
+        name = "迷迹波\nMyGO!!!!!",
         lazy_x = 0,
         out_of_bound = false,
         song = {
-            "测试1",
-            "测试2",
-            "test3"
+            "迷星叫",
+            "壱雫空",
+            "碧天伴",
+            "影色舞",
+            "歌いましょう鳴らしましょう",
+            "潜在表",
+            "音一会",
+            "春日影",
+            "詩超絆",
+            "迷路日々",
+            "無路矢",
+            "名無声",
+            "栞",
         }
     },
     {
@@ -128,6 +138,7 @@ local cover_flow_offset_x = 0
 local cover_padding = screenWidth/11
 local cover_select_index = 1
 local cover_select_index_lazy = 1
+local cover_flip_animation_duration <const> = 200
 
 local cover_center_animator = gfx.animator.new(1000, -(#cover * cover_padding), screenWidth/2, playdate.easingFunctions.inOutCubic)
 -- local cover_center_delaytimer = 
@@ -137,6 +148,9 @@ local statebar_sprite = gfx.sprite.new(gfx.image.new("img/statebar"))
 local battery_lazy = 0
 local arrow_btn_skip_cnt_sensitivity = 100
 local song_select_index = 1
+
+local flip_songlist_animator = gfx.animator.new(0, 0, 90, playdate.easingFunctions.outCubic)
+local is_flip_songlist_animator_to_gridview_control = false
 
 -----------------
 
@@ -426,30 +440,25 @@ end
 
 
 local draw_song_list_init = false
-local draw_song_list_size, draw_song_list_gridview, draw_song_list_gridviewSprite
+local draw_song_list_size, draw_song_list_gridview
+local draw_song_list_gridviewSprite = gfx.sprite.new()
+local draw_song_list_gridviewImage = gfx.image.new(1,1)
 function draw_song_list()
-    if not draw_song_list_init then
+    if draw_song_list_init then
 
         gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
         draw_song_list_size = gfx.getTextSize("我")
-        draw_song_list_gridview = pd.ui.gridview.new(0, draw_song_list_size*1.5+2)
+        draw_song_list_gridview = pd.ui.gridview.new(0, draw_song_list_size*1.5+6)
         draw_song_list_gridview:setNumberOfRows(#cover[cover_select_index].song)
-        draw_song_list_gridview:setCellPadding(0,0,4,0)
-        draw_song_list_gridview:setSectionHeaderHeight(draw_song_list_size*1.5*2+4)
+        draw_song_list_gridview:setCellPadding(0,0,0,0)
 
         draw_song_list_gridviewSprite = gfx.sprite.new()
         draw_song_list_gridviewSprite:setCenter(0.5,1)
-        draw_song_list_gridviewSprite:moveTo(screenWidth/2, screenHeight)
         draw_song_list_gridviewSprite:setZIndex(300)
+        draw_song_list_gridviewSprite:moveTo(screenWidth/2, screenHeight)
         draw_song_list_gridviewSprite:add()
 
-        draw_song_list_init = true
-    end
-
-    function draw_song_list_gridview:drawSectionHeader(section, x, y, width, height)
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
-        gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
-        gfx.drawTextAligned(cover[cover_select_index].name, 0, 0, kTextAlignment.left)
+        draw_song_list_init = false
     end
 
     function draw_song_list_gridview:drawCell(section, row, column, selected, x, y, width, height)
@@ -459,12 +468,12 @@ function draw_song_list()
             gfx.setColor(gfx.kColorBlack)
             gfx.fillRect(x, y, width, height)
             gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-            gfx.drawTextAligned(cover[cover_select_index].song[row], x+10, y+5, kTextAlignment.left)
-            -- gfx.setImageDrawMode(gfx.kDrawModeCopy)
-            -- indicator_img.list_A:draw(screenWidth-50, y)
+            gfx.drawTextAligned(cover[cover_select_index].song[row], x+6, y+7, kTextAlignment.left)
+            gfx.setImageDrawMode(gfx.kDrawModeCopy)
+            gfx.image.new("img/arrow_right"):draw(width-22, y+5)
         else
             gfx.setImageDrawMode(gfx.kDrawModeCopy)
-            gfx.drawTextAligned(cover[cover_select_index].song[row], x+10, y+5, kTextAlignment.left)
+            gfx.drawTextAligned(cover[cover_select_index].song[row], x+6, y+7, kTextAlignment.left)
         end
     end
 
@@ -507,24 +516,42 @@ function draw_song_list()
     if draw_song_list_gridview.needsDisplay then
         local pos = {
             x=screenWidth*(3/5),
-            y=screenHeight*(3/4),
+            y=215,
         }
-        local gridviewImage = gfx.image.new(pos.x,pos.y)
-        gfx.pushContext(gridviewImage)
-            draw_song_list_gridview:drawInRect(0, 0, pos.x, pos.y)
+        draw_song_list_gridviewImage = gfx.image.new(pos.x,pos.y,gfx.kColorWhite)
+        gfx.pushContext(draw_song_list_gridviewImage)
+            gfx.setPattern(gfx.image.new("img/densechecker-tense"))
+            gfx.fillRect(0,0,pos.x,46)
+
+            gfx.setColor(gfx.kColorBlack)
+            gfx.drawRect(0,0,pos.x,pos.y+2)
+
+            gfx.setFont(FONT["SourceHanSansCN_M_16px"].font)
+            gfx.setImageDrawMode(gfx.kDrawModeCopy)
+            gfx.drawTextAligned(cover[cover_select_index].name, 7, 7, kTextAlignment.left)
+            gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+            gfx.drawTextAligned(cover[cover_select_index].name, 6, 6, kTextAlignment.left)
+
+            draw_song_list_gridview:drawInRect(0, 46, pos.x, pos.y-46)
         gfx.popContext()
-        draw_song_list_gridviewSprite:setImage(gridviewImage)
+        
+        if is_flip_songlist_animator_to_gridview_control then
+            draw_song_list_gridviewSprite:setImage(draw_song_list_gridviewImage)
+        end
     end
 
 end
 
 
-
 local flip_cover_to_none_init = false
 local flip_cover_to_none_animator = gfx.animator.new(0, 0, 90, playdate.easingFunctions.outCubic)
-function flip_cover_to_none()
+function flip_cover_to_none(playback)
     if flip_cover_to_none_init then
-        flip_cover_to_none_animator = gfx.animator.new(200, 0, 90, playdate.easingFunctions.outCubic)
+        if playback then
+            flip_cover_to_none_animator = gfx.animator.new(cover_flip_animation_duration, 90, 0, playdate.easingFunctions.inOutCubic, cover_flip_animation_duration)
+        else
+            flip_cover_to_none_animator = gfx.animator.new(cover_flip_animation_duration, 0, 90, playdate.easingFunctions.inOutCubic)
+        end
         flip_cover_to_none_init = false
     else
         if not flip_cover_to_none_animator:ended() then
@@ -541,9 +568,85 @@ function flip_cover_to_none()
     end
 end
 
+
+local flip_songlist_init = false
+function flip_songlist(playback)
+    if flip_songlist_init then
+        if playback then
+            flip_songlist_animator = gfx.animator.new(cover_flip_animation_duration, 0, -90, playdate.easingFunctions.inOutCubic)      
+        else
+            flip_songlist_animator = gfx.animator.new(cover_flip_animation_duration, -90, 0, playdate.easingFunctions.inOutCubic, cover_flip_animation_duration)
+        end
+        flip_songlist_init = false
+    else
+        if not flip_songlist_animator:ended() then
+            is_flip_songlist_animator_to_gridview_control = false
+            local gridimg_width, gridimg_height = draw_song_list_gridviewImage:getSize()
+            local gridviewImage_rotate = gfx.image.new((gridimg_height+100), gridimg_width, gfx.kColorClear)  --render buffer for rotation
+            gfx.pushContext(gridviewImage_rotate)
+                draw_song_list_gridviewImage:drawRotated((gridimg_height+100)/2, gridimg_width/2, -90)
+            gfx.popContext()
+
+            local gridviewImage_transform = gfx.image.new(gridimg_width, (gridimg_height+100), gfx.kColorClear)
+            gfx.pushContext(gridviewImage_transform)
+                -- gfx.setColor(gfx.kColorBlack)
+                -- gfx.fillRect(0,0,1000,1000)
+                if flip_songlist_animator:currentValue() > -90 then
+                    cover_render("center", flip_songlist_animator:currentValue(), gridviewImage_rotate, -37, 89)  --magic num offset :(
+                end
+            gfx.popContext()
+            draw_song_list_gridviewSprite:setImage(gridviewImage_transform)
+        else
+            is_flip_songlist_animator_to_gridview_control = true
+        end
+    end
+end
+
+local flip_songlist_to_none_init = false
+function flip_songlist_to_none()
+    if flip_songlist_to_none_init then
+        flip_songlist_init = true
+        flip_songlist_to_none_init = false
+    else
+        flip_songlist(true)
+    end
+end
+
+
+local dpad_accelerate = .2
+local dpad_spec = {
+    min = 6,
+    max = 10
+}
+local dpad_speed = dpad_spec.min
+function dpad_control_cover_flow()
+    if dpad_speed>dpad_spec.max then
+        dpad_speed = dpad_spec.max
+    end
+    if pd.buttonIsPressed(pd.kButtonRight) then
+        if cover_flow_offset_x < screenWidth then
+            dpad_speed += dpad_accelerate
+            return -dpad_speed
+        end
+    elseif pd.buttonIsPressed(pd.kButtonLeft) then
+        if cover_flow_offset_x > -(#cover * cover_padding) then
+            dpad_speed += dpad_accelerate
+            return dpad_speed
+        end
+    end
+    if pd.buttonJustReleased(pd.kButtonRight) or pd.buttonJustReleased(pd.kButtonLeft) then
+        dpad_speed = dpad_spec.min
+    end
+    return 0
+end
+
+
 -----------------
 STAGE["cover_flow_scroll"] = function()
     local change, acceleratedChange = playdate.getCrankChange()
+    if math.abs(change) < 2 then
+        change = dpad_control_cover_flow()
+    end
     if math.abs(change) > 2 then
         cover_flow_offset_x += change
         cover_update()
@@ -556,14 +659,31 @@ STAGE["cover_flow_scroll"] = function()
         )
     end
     
+    flip_songlist_to_none()
+    flip_cover_to_none(true)
+
     if pd.buttonJustPressed(pd.kButtonA) then
+        stage_manager = "cover_selected"
+        is_flip_songlist_animator_to_gridview_control = false
         flip_cover_to_none_init = true
+        flip_songlist_init = true
+        draw_song_list_init = true
     end
 
-    flip_cover_to_none()
 end
 
 STAGE["cover_selected"] = function()
+    flip_cover_to_none(false)
+    
+    draw_song_list()
+    flip_songlist(false)
+
+    if pd.buttonJustPressed(pd.kButtonB) then
+        stage_manager = "cover_flow_scroll"
+        is_flip_songlist_animator_to_gridview_control = false
+        flip_cover_to_none_init = true
+        flip_songlist_to_none_init = true
+    end
 
 end
 
@@ -584,7 +704,6 @@ function init()
     cover_name_sprite:moveTo(screenWidth/2, screenHeight-20)
     cover_name_sprite:setZIndex(200)
     cover_name_sprite:add()
-    update_cover_name(cover[cover_select_index].name)
 
     cover_init()
     
@@ -597,11 +716,13 @@ function pd.update()
     
     STAGE[stage_manager]()
 
-    -- draw_song_list()
+    playdate.timer.performAfterDelay(800, function(value)
+        update_cover_name(cover[cover_select_index].name)
+    end
+    )
+
+    print(cover_flow_offset_x)
 
 end
 
 init()
-
--- function playdate.leftButtonDown() test_x -= 5 end
--- function playdate.rightButtonDown() test_x += 5 end
