@@ -1,4 +1,4 @@
-# Cover Flow Demo
+# iPod Cover Flow Demo on Playdate
  
 ![screenshot](https://github.com/Antonoko/pd-cover-flow/blob/main/__asset__/thumbnail.png)
 
