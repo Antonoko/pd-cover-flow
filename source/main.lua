@@ -23,124 +23,43 @@ local FONT <const> = {
     }
 }
 
-local cover = {
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "迷迹波\nMyGO!!!!!",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "迷星叫",
-            "壱雫空",
-            "碧天伴",
-            "影色舞",
-            "歌いましょう鳴らしましょう",
-            "潜在表",
-            "音一会",
-            "春日影",
-            "詩超絆",
-            "迷路日々",
-            "無路矢",
-            "名無声",
-            "栞",
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
-    {
-        image = gfx.image.new('img/cover'),
-        sprite = playdate.graphics.sprite.new(),
-        name = "MyGO!!!!!\n迷迹波",
-        lazy_x = 0,
-        out_of_bound = false,
-        song = {
-            "测试1",
-            "测试2",
-            "test3"
-        }
-    },
+local cover = {}
+local SFX = {
+    selection = pd.sound.fileplayer.new("sound/selection"),
+    selection_reverse = pd.sound.fileplayer.new("sound/selection-reverse"),
+    denial = pd.sound.fileplayer.new("sound/denial"),
+    key = pd.sound.fileplayer.new("sound/key"),
+    slide_in = pd.sound.fileplayer.new("sound/slide_in"),
+    slide_out = pd.sound.fileplayer.new("sound/slide_out"),
+    click = pd.sound.fileplayer.new("sound/click"),
+    crumple_paper_01 = pd.sound.fileplayer.new("sound/crumple_paper_01"),
+}
+local SFX_paper = {
+    pd.sound.fileplayer.new("sound/paper1"),
+    pd.sound.fileplayer.new("sound/paper2"),
+    pd.sound.fileplayer.new("sound/paper3"),
+    pd.sound.fileplayer.new("sound/paper4"),
+    pd.sound.fileplayer.new("sound/paper5"),
+    pd.sound.fileplayer.new("sound/paper6"),
+    pd.sound.fileplayer.new("sound/paper7"),
+    pd.sound.fileplayer.new("sound/paper8"),
+    pd.sound.fileplayer.new("sound/paper9"),
+    pd.sound.fileplayer.new("sound/paper10"),
+    pd.sound.fileplayer.new("sound/paper11"),
+    pd.sound.fileplayer.new("sound/paper12"),
+    pd.sound.fileplayer.new("sound/paper13"),
+    pd.sound.fileplayer.new("sound/paper14"),
 }
 local STAGE = {}
 local stage_manager = "cover_flow_scroll"
 local cover_flow_offset_y = -10
 local cover_flow_offset_x = 0
-local cover_padding = screenWidth/11
+local cover_padding = screenWidth/10
 local cover_select_index = 1
 local cover_select_index_lazy = 1
 local cover_flip_animation_duration <const> = 200
 
-local cover_center_animator = gfx.animator.new(1000, -(#cover * cover_padding), screenWidth/2, playdate.easingFunctions.inOutCubic)
+local cover_center_animator = gfx.animator.new(1500, -(#cover * cover_padding), screenWidth/2, playdate.easingFunctions.outCubic)
 -- local cover_center_delaytimer = 
 
 local cover_name_sprite = gfx.sprite.new()
@@ -193,6 +112,23 @@ function map_inoutcubic(input, old_min, old_max, new_min, new_max)
     local res = mapValue(cubic_bezier(temp_map), 0, 1, new_min, new_max)
     -- print("input", input, "temp_map", temp_map, "res", res)
     return res
+end
+
+function load_json()
+    local json_data = json.decodeFile("cover_list.json")
+    for k, v in pairs(json_data["cover_list"]) do
+        print("loading",k)
+        local insert_data = {
+            image = gfx.image.new("img/cover/"..v.image),
+            sprite = playdate.graphics.sprite.new(),
+            name = v.name.."\n"..v.artist,
+            lazy_x = 0,
+            out_of_bound = false,
+            song = v.song
+        }
+        assert(insert_data.image)
+        table.insert(cover, insert_data)
+    end
 end
 
 
@@ -301,10 +237,20 @@ function cover_update_angle_render(x, sprite, image)
     else
         direction = "right"
     end
+    add_stroke_on_image(image)
 	gfx.pushContext(target_image)
         cover_render(direction, target_angle, image, 0, 0)
 	gfx.popContext()
     sprite:setImage(target_image)
+end
+
+
+function add_stroke_on_image(image)
+    local width, height = image:getSize()
+    gfx.pushContext(image)
+        gfx.setColor(gfx.kColorBlack)
+        gfx.drawRect(0,0,width,height)
+    gfx.popContext()
 end
 
 
@@ -428,7 +374,13 @@ function crank_move_update_routine()
     -- update cover name
     cover_select_index = get_cover_index()
     if cover_select_index ~= cover_select_index_lazy then
+        if cover_select_index > cover_select_index_lazy then
+            SFX.selection:play()
+        else
+            SFX.selection_reverse:play()
+        end
         if cover_select_index > 0 and cover_select_index <= #cover then
+            -- SFX_paper[math.random(#SFX_paper)]:play()
             update_cover_name(cover[cover_select_index].name)
         else
             update_cover_name("")
@@ -479,8 +431,10 @@ function draw_song_list()
 
     function _scroll_select_file_gridview(direction)
         if direction == "next" then
+            SFX.selection:play()
             draw_song_list_gridview:selectNextRow(true)
         elseif direction == "previous" then
+            SFX.selection_reverse:play()
             draw_song_list_gridview:selectPreviousRow(true)
         end
         -- SFX.selection.sound:play()
@@ -613,10 +567,10 @@ function flip_songlist_to_none()
 end
 
 
-local dpad_accelerate = .2
+local dpad_accelerate = .5
 local dpad_spec = {
-    min = 6,
-    max = 10
+    min = 15,
+    max = 30
 }
 local dpad_speed = dpad_spec.min
 function dpad_control_cover_flow()
@@ -645,10 +599,10 @@ end
 STAGE["cover_flow_scroll"] = function()
     local change, acceleratedChange = playdate.getCrankChange()
     if math.abs(change) < 2 then
-        change = dpad_control_cover_flow()
+        change = -dpad_control_cover_flow()
     end
     if math.abs(change) > 2 then
-        cover_flow_offset_x += change
+        cover_flow_offset_x += -change/3
         cover_update()
         crank_move_update_routine()
         cover_back_to_center_init = true
@@ -668,6 +622,8 @@ STAGE["cover_flow_scroll"] = function()
         flip_cover_to_none_init = true
         flip_songlist_init = true
         draw_song_list_init = true
+        SFX.click:play()
+        SFX_paper[math.random(#SFX_paper)]:play()
     end
 
 end
@@ -683,6 +639,7 @@ STAGE["cover_selected"] = function()
         is_flip_songlist_animator_to_gridview_control = false
         flip_cover_to_none_init = true
         flip_songlist_to_none_init = true
+        SFX.slide_out:play()
     end
 
 end
@@ -696,6 +653,9 @@ function init()
     gfx.setColor(gfx.kColorWhite)
 	gfx.fillRect(0,0,screenWidth,screenHeight)
 
+    load_json()
+    cover_center_animator = gfx.animator.new(1500, -(#cover * cover_padding), screenWidth/2, playdate.easingFunctions.outCubic)
+
     statebar_sprite:setCenter(0,0)
     statebar_sprite:moveTo(0,0)
     statebar_sprite:add()
@@ -706,7 +666,7 @@ function init()
     cover_name_sprite:add()
 
     cover_init()
-    
+    SFX.crumple_paper_01:play()
 end
 
 
@@ -721,7 +681,7 @@ function pd.update()
     end
     )
 
-    print(cover_flow_offset_x)
+    -- print(cover_flow_offset_x)
 
 end
 
