@@ -1,6 +1,46 @@
 {
     "cover_list":[
         {
+            "image": "Puella_Magi_Madoka_Magica_Ultimate_Best",
+            "name": "「魔法少女まどかマギカ」Ultimate Best",
+            "artist": "Various Artists",
+            "song": [
+                "コネクト",
+                "また あした",
+                "Credens justitiam",
+                "Sis puella magica!",
+                "and I'm home -Original Master Version.-",
+                "Magia",
+                "ルミナス",
+                "she is a witch",
+                "ひかりふる",
+                "naturally",
+                "あこがれ咲いた",
+                "Mebius Ash",
+                "ユメおと",
+                "Stairs",
+                "まだダメよ",
+                "Noi!",
+                "カラフル",
+                "君の銀の庭"
+            ]
+        },
+        {
+            "image": "One_Last_Kiss",
+            "name": "One Last Kiss",
+            "artist": "宇多 田光",
+            "song": [
+                "Beautiful World - Da Capo Version",
+                "Beautiful World - 2021 Remastered",
+                "Beautiful World - PLANiTb Acoustica Mix 2021 Remastere[d]",
+                "Hikaru Utada, Russell McNamara",
+                "桜流し-2021 Remastered",
+                "Fly Me To The Moon (In Other Words) - 2007 MIX [2021 Remastered]",
+                "One Last Kiss - Instrumental",
+                "Beautiful World - Da Capo Version [Instrumental]"
+            ]
+        },
+        {
             "image": "迷迹波",
             "name": "迷迹波",
             "artist": "MyGO!!!!!",
@@ -18,6 +58,28 @@
                 "無路矢",
                 "名無声",
                 "栞"
+            ]
+        },
+        {
+            "image": "Kessoku_Band",
+            "name": "結束バンド",
+            "artist": "結束バンド",
+            "song": [
+                "青春コンプレックス",
+                "ひとりぼっち東京",
+                "結束パ",
+                "Distortion!!",
+                "ひみつ基地",
+                "ギターと孤独と蒼い惑星",
+                "ラブソングが歌えない",
+                "あのバンド",
+                "カラカラ",
+                "小さな海",
+                "なにが悪い",
+                "忘れてやらない",
+                "星座になれたら",
+                "フラッシュバッカー",
+                "転がる岩、君に朝が降る"
             ]
         },
         {
@@ -125,6 +187,22 @@
             ]
         },
         {
+            "image": "OACL",
+            "name": "OACL",
+            "artist": "Local Visions,長瀬有花",
+            "song": [
+                "Time Capsule",
+                "気をつけて!",
+                "Sleeper's Store",
+                "さくらりら",
+                "マーキュリーランプ",
+                "インタールードは水に溶けて",
+                "ゆめゆめキャット",
+                "夢色ゆらゆら",
+                "ホライゾン"
+            ]
+        },
+        {
             "image": "Alterour_Setsuna_Pop",
             "name": "アルターワー・セツナポップ",
             "artist": "椎名もた(ぽわぽわP)",
@@ -216,28 +294,6 @@
             ]
         },
         {
-            "image": "Kessoku_Band",
-            "name": "結束バンド",
-            "artist": "結束バンド",
-            "song": [
-                "青春コンプレックス",
-                "ひとりぼっち東京",
-                "結束パ",
-                "Distortion!!",
-                "ひみつ基地",
-                "ギターと孤独と蒼い惑星",
-                "ラブソングが歌えない",
-                "あのバンド",
-                "カラカラ",
-                "小さな海",
-                "なにが悪い",
-                "忘れてやらない",
-                "星座になれたら",
-                "フラッシュバッカー",
-                "転がる岩、君に朝が降る"
-            ]
-        },
-        {
             "image": "LOVE_ALL_SERVE_ALL",
             "name": "LOVE ALL SERVE ALL",
             "artist": "藤井 風",
@@ -264,22 +320,6 @@
                 "Hype Boy",
                 "Cookie",
                 "Hurt"
-            ]
-        },
-        {
-            "image": "OACL",
-            "name": "OACL",
-            "artist": "Local Visions,長瀬有花",
-            "song": [
-                "Time Capsule",
-                "気をつけて!",
-                "Sleeper's Store",
-                "さくらりら",
-                "マーキュリーランプ",
-                "インタールードは水に溶けて",
-                "ゆめゆめキャット",
-                "夢色ゆらゆら",
-                "ホライゾン"
             ]
         },
         {
@@ -485,51 +525,25 @@
             ]
         },
         {
-            "image": "Puella_Magi_Madoka_Magica_Ultimate_Best",
-            "name": "「魔法少女まどかマギカ」Ultimate Best",
-            "artist": "Various Artists",
-            "song": [
-                "コネクト",
-                "また あした",
-                "Credens justitiam",
-                "Sis puella magica!",
-                "and I'm home -Original Master Version.-",
-                "Magia",
-                "ルミナス",
-                "she is a witch",
-                "ひかりふる",
-                "naturally",
-                "あこがれ咲いた",
-                "Mebius Ash",
-                "ユメおと",
-                "Stairs",
-                "まだダメよ",
-                "Noi!",
-                "カラフル",
-                "君の銀の庭"
-            ]
-        },
-        {
-            "image": "One_Last_Kiss",
-            "name": "One Last Kiss",
-            "artist": "宇多 田光",
-            "song": [
-                "Beautiful World - Da Capo Version",
-                "Beautiful World - 2021 Remastered",
-                "Beautiful World - PLANiTb Acoustica Mix 2021 Remastere[d]",
-                "Hikaru Utada, Russell McNamara",
-                "桜流し-2021 Remastered",
-                "Fly Me To The Moon (In Other Words) - 2007 MIX [2021 Remastered]",
-                "One Last Kiss - Instrumental",
-                "Beautiful World - Da Capo Version [Instrumental]"
-            ]
-        },
-        {
             "image": "Discovery_Station",
             "name": "Discovery Station",
             "artist": "Apple Music",
             "song": [
                 "Coming back..."
+            ]
+        },
+        {
+            "image": "about",
+            "name": "About Cover Flow",
+            "artist": "haru",
+            "song": [
+                "thanks for playing v0.1",
+                "for more information:",
+                "---",
+                "github.com/",
+                "Antonoko/",
+                "pd-cover-flow",
+                "---"
             ]
         }
 

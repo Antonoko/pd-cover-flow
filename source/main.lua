@@ -52,6 +52,8 @@ local SFX_paper = {
 }
 local STAGE = {}
 local stage_manager = "cover_flow_scroll"
+local arrow_btn_skip_cnt_sensitivity = 100
+
 local cover_flow_offset_y = -10
 local cover_flow_offset_x = 0
 local cover_padding = screenWidth/10
@@ -421,6 +423,9 @@ function draw_song_list()
             gfx.fillRect(x, y, width, height)
             gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
             gfx.drawTextAligned(cover[cover_select_index].song[row], x+6, y+7, kTextAlignment.left)
+
+            gfx.setColor(gfx.kColorBlack)
+            gfx.fillRect(width-24, y, 24, height)
             gfx.setImageDrawMode(gfx.kDrawModeCopy)
             gfx.image.new("img/arrow_right"):draw(width-22, y+5)
         else
@@ -574,24 +579,43 @@ local dpad_spec = {
 }
 local dpad_speed = dpad_spec.min
 function dpad_control_cover_flow()
-    if dpad_speed>dpad_spec.max then
-        dpad_speed = dpad_spec.max
-    end
+    -- if dpad_speed>dpad_spec.max then
+    --     dpad_speed = dpad_spec.max
+    -- end
+    -- if pd.buttonIsPressed(pd.kButtonRight) then
+    --     if cover_flow_offset_x < screenWidth then
+    --         dpad_speed += dpad_accelerate
+    --         return -dpad_speed
+    --     end
+    -- elseif pd.buttonIsPressed(pd.kButtonLeft) then
+    --     if cover_flow_offset_x > -(#cover * cover_padding) then
+    --         dpad_speed += dpad_accelerate
+    --         return dpad_speed
+    --     end
+    -- end
+    -- if pd.buttonJustReleased(pd.kButtonRight) or pd.buttonJustReleased(pd.kButtonLeft) then
+    --     dpad_speed = dpad_spec.min
+    -- end
+
+    local res = 0
     if pd.buttonIsPressed(pd.kButtonRight) then
-        if cover_flow_offset_x < screenWidth then
-            dpad_speed += dpad_accelerate
-            return -dpad_speed
+        arrow_btn_skip_cnt_sensitivity += 1
+        if arrow_btn_skip_cnt_sensitivity > 6 then
+            arrow_btn_skip_cnt_sensitivity = 0
+            res = -cover_padding * (10/5)
         end
     elseif pd.buttonIsPressed(pd.kButtonLeft) then
-        if cover_flow_offset_x > -(#cover * cover_padding) then
-            dpad_speed += dpad_accelerate
-            return dpad_speed
+        arrow_btn_skip_cnt_sensitivity += 1
+        if arrow_btn_skip_cnt_sensitivity > 6 then
+            arrow_btn_skip_cnt_sensitivity = 0
+            res = cover_padding * (10/5)
         end
     end
     if pd.buttonJustReleased(pd.kButtonRight) or pd.buttonJustReleased(pd.kButtonLeft) then
-        dpad_speed = dpad_spec.min
+        arrow_btn_skip_cnt_sensitivity = 100
     end
-    return 0
+
+    return res
 end
 
 
